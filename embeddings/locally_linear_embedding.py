@@ -16,7 +16,7 @@ def convert_to_adjacency_matrix(df):
     return adjacency_matrix
   
 # Relationships matrix as a pandas DataFrame
-relationships_matrix = pd.read_csv('/content/person_knows_person_0_0.csv')
+relationships_matrix = pd.read_csv('../data/person_knows_person_0_0.csv')
 relationships_matrix.head()
 
 adjacency_matrix = convert_to_adjacency_matrix(relationships_matrix)
