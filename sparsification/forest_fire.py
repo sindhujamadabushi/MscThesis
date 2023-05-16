@@ -17,4 +17,11 @@ attributes = ffs.scores()
 for attribute in attributes[:5]:
     print("{:.3f}".format(attribute))
     
+# Initialize the algorithm
+fireSparsifier = nk.sparsification.ForestFireSparsifier(0.6, 5.0)
+
+# Get sparsified graph
+fireGraph = fireSparsifier.getSparsifiedGraphOfSize(G, targetRatio)
+G.numberOfEdges(), fireGraph.numberOfEdges()
+    
   
