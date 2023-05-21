@@ -1,0 +1,54 @@
+CALL algo.procedure.cosine()
+
+public class FullTextIndex
+{
+private static final Map<String,String> FULL_TEXT =
+stringMap( IndexManager.PROVIDER, "lucene", "type", "fulltext" );
+@Context
+public GraphDatabaseService db;
+
+@Context
+public Log log;
+@Procedure(value = "similarity.procedure")
+@Description("Execute lucene query in the given index, return found
+nodes")
+public Stream<SearchHit> search()
+{
+Stream<SearchHit> s1 = null, s2;
+Boolean s1Empty= true;
+String queryString="";
+List<String> a= new ArrayList<>();
+
+String[] emb = {
+          "0.0797428,0.182545,0.0576887,0.0351693",
+          "-0.0777048,0.386052,0.584654,3.87082",
+          "-0.0813391,0.0114495,-0.0740742,-0.089435",
+          "-0.106586,0.0660901,0.0476956,0.11351",
+          "-0.127242,0.333151,-0.0536305,0.245765",
+          "-0.015756,0.265684,-0.0116511,0.181644",
+          "-0.0444543,0.169539,-0.0595563,0.103512",
+          "-0.0888892,0.116316,0.0829568,0.279422",
+          "-0.0572816,0.36165,-0.0141653,0.0933123",
+          "0.0701616,-0.417067,-0.158711,-0.412007",
+}
+queryString="WITH [";
+for(int i=0;i<emb.length-1;i++){
+queryString+="{item: "+i+", weights: ["+emb[i]+"]}, ";
+}
+queryString+="{item: "+(emb.length-1)+", weights:
+["+emb[emb.length-1]+"]}] as data CALL
+algo.similarity.cosine.stream(data) YIELD item1, item2,
+similarity RETURN item1, item2, similarity;";
+s1=db.execute(queryString).stream().map(it->new
+SearchHit(it.values().stream().map(it2->it2.toString()).collect(Collectors.joining(";"))));
+return s1;
+}
+
+public static class SearchHit
+{
+// This records contain a single field named 'nodeId'
+public String similarity;
+public SearchHit( String similarity )
+{
+this.similarity = similarity;
+}
