@@ -1,7 +1,11 @@
 import networkit as nk
 
-G = nk.readGraph("../input/jazz.graph", nk.Format.METIS)
+reader = nk.graphio.EdgeListReader(',',1,continuous=False)
+G = reader.read('/content/person_knows_person_0_0.csv')
+nk.graphio.writeGraph(G, 'connections.graph', nk.Format.METIS)
+person_knows_person = nk.graphio.readGraph('connections.graph', nk.Format.METIS)
 G.indexEdges()
+
 G.numberOfNodes(), G.numberOfEdges()
 
 targetRatio = 0.2
