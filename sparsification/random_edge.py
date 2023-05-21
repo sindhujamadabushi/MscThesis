@@ -1,6 +1,9 @@
 import networkit as nk
 
-G = nk.readGraph("../input/jazz.graph", nk.Format.METIS)
+reader = nk.graphio.EdgeListReader(',',1,continuous=False)
+G = reader.read('../data/person_knows_person_0_0.csv')
+nk.graphio.writeGraph(G, 'connections.graph', nk.Format.METIS)
+person_knows_person = nk.graphio.readGraph('connections.graph', nk.Format.METIS)
 G.indexEdges()
 G.numberOfNodes(), G.numberOfEdges()
 
@@ -14,8 +17,6 @@ res.run()
 
 # Get edge scores
 randomEdgeScores = res.scores()
-for score in randomEdgeScores[:5]:
-    print("{:.3f}".format(score))
     
 # Initialize the algorithm
 randomEdgeSparsifier = nk.sparsification.RandomEdgeSparsifier()
