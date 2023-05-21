@@ -1,7 +1,7 @@
 import networkit as nk
 
 reader = nk.graphio.EdgeListReader(',',1,continuous=False)
-G = reader.read('/content/person_knows_person_0_0.csv')
+G = reader.read('../data/person_knows_person_0_0.csv')
 nk.graphio.writeGraph(G, 'connections.graph', nk.Format.METIS)
 person_knows_person = nk.graphio.readGraph('connections.graph', nk.Format.METIS)
 G.indexEdges()
