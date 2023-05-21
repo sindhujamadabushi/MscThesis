@@ -1,0 +1,37 @@
+betweenness centrality:
+    CALL algo.betweenness.stream('Person','KNOWS',direction:'out')
+    YIELD nodeId, centrality
+    MATCH (user:Person) WHERE id(user) = nodeId
+    RETURN user.id AS user,centrality
+    ORDER BY centrality DESC;
+      
+Community detection:
+    CALL algo.louvain.stream('Person', 'KNOWS', )
+    YIELD nodeId, community
+    RETURN algo.getNodeById(nodeId).id AS user, community
+    ORDER BY community;
+
+Page rank:
+    CALL algo.pageRank.stream('Person', 'KNOWS', iterations:20, dampingFactor:0.85)
+    YIELD nodeId, score
+    RETURN algo.getNodeById(nodeId).name AS page,score
+    ORDER BY score DESC
+
+Connected components:
+    CALL algo.unionFind('User', 'FRIEND', write:true, partitionProperty:\partition")
+    YIELD nodes, setCount, loadMillis, computeMillis, writeMillis;
+
+Strongly connected components:
+    CALL algo.scc('User','FOLLOW', write:true,partitionProperty:'partition')
+    YIELD loadMillis, computeMillis, writeMillis, setCount, maxSetSize, minSetSize;
+
+Pairwise similarities of unembedded data:
+    MATCH (p:Person), (c:Tag)
+    OPTIONAL MATCH (p)<-[likes:HAS INTEREST]-(c)
+    WITH item:id(c), weights: collect(coalesce(likes.score, 0)) as userData WITH
+    collect(userData) as data
+    CALL algo.similarity.cosine.stream(data)
+    YIELD item1, item2, count1, count2, similarity
+    RETURN algo.getNodeById(item1).id AS from, algo.getNodeById(item2).id AS to,
+    similarity
+    ORDER BY similarity DESC
