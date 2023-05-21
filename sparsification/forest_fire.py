@@ -1,6 +1,9 @@
 import networkit as nk
 
-G = nk.readGraph("../input/jazz.graph", nk.Format.METIS)
+reader = nk.graphio.EdgeListReader(',',1,continuous=False)
+G = reader.read('../data/person_knows_person_0_0.csv')
+nk.graphio.writeGraph(G, 'connections.graph', nk.Format.METIS)
+person_knows_person = nk.graphio.readGraph('connections.graph', nk.Format.METIS)
 G.indexEdges()
 G.numberOfNodes(), G.numberOfEdges()
 
@@ -14,8 +17,6 @@ ffs.run()
 
 # Get edge scores
 attributes = ffs.scores()
-for attribute in attributes[:5]:
-    print("{:.3f}".format(attribute))
     
 # Initialize the algorithm
 fireSparsifier = nk.sparsification.ForestFireSparsifier(0.6, 5.0)
